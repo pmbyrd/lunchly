@@ -41,18 +41,31 @@ class Customer {
         FROM customers WHERE id = $1`,
       [id]
     );
-
     const customer = results.rows[0];
-
     if (customer === undefined) {
       const err = new Error(`No such customer: ${id}`);
       err.status = 404;
       throw err;
     }
-
     return new Customer(customer);
   }
 
+  
+  async search(q) { 
+    const results = await db.query(
+      `SELECT id,
+        first_name AS "firstName",
+        last_name AS "lastName",
+        phone,
+        notes
+      FROM customers
+      WHERE first_name ILIKE $1
+      OR last_name ILIKE $1
+      ORDER BY last_name, first_name`,
+      [`%${q}%`]
+    );
+    return results.rows.map(c => new Customer(c));
+  }
   /** get all reservations for this customer. */
 
   async getReservations() {

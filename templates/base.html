@@ -34,8 +34,27 @@
         </li>
       </ul>
     </div>
+    <!-- add a search form -->
+    <!-- TODO try not sending the page anywhere the results should be tagged in that results space from the  -->
+    <form action="/search">
+      <input type="text" name="search" placeholder="Search for a customer">
+      <input type="submit" value="Search" class="btn btn-primary btn-sm">
+    </form>
   </nav>
 
+</div>
+<div class="container results">
+  {% block results %}
+  <!-- If there are block results show each customer making a match -->
+  {% if results %}
+  <ul style="column-count: 4">
+    {% for customer in customers %}
+    <li><a href="/{{ customer.id }}/">{{customer.fullName}}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% endblock %}
 </div>
 <div class="container">
 

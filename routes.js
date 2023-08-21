@@ -54,7 +54,7 @@ router.get("/:id/", async function(req, res, next) {
     const customer = await Customer.get(req.params.id);
 
     const reservations = await customer.getReservations();
-
+    // be able to save a new reservation  for a customer
     return res.render("customer_detail.html", { customer, reservations });
   } catch (err) {
     return next(err);
@@ -101,16 +101,27 @@ router.post("/:id/add-reservation/", async function(req, res, next) {
 
     const reservation = new Reservation({
       customerId,
-      startAt,
       numGuests,
+      startAt,
       notes
     });
     await reservation.save();
-
+    // Builtin method to save a reservation for a customer go back to the customer page after adding a reservation
     return res.redirect(`/${customerId}/`);
   } catch (err) {
     return next(err);
   }
 });
+
+router.post("/search/", async function(req, res, next) {
+  try {
+    const customers = await Customer.search(req.body.search);
+    console.log(customers);
+    return res.redirect("/"); // Redirect to the homepage after searching
+  } catch (err) {
+    return next(err);
+  }
+});
+
 
 module.exports = router;
